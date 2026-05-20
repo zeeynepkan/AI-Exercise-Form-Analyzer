@@ -1,0 +1,11 @@
+venv/
+venv312/
+__pycache__/
+*.pyc
+
+data/raw/
+data/processed/
+data/models/
+
+.idea/
+.vscode/
