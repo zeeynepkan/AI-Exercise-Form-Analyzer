@@ -4,10 +4,10 @@ class Config:
     # MediaPipe ayarları
     MIN_DETECTION_CONFIDENCE = 0.5
     MIN_TRACKING_CONFIDENCE = 0.5
-    
+
     # Egzersiz tipleri
-    EXERCISE_TYPES = ['squat', 'pushup', 'shoulder_press']
-    
+    EXERCISE_TYPES = ['squat', 'lunge']
+
     # Landmark indeksleri (MediaPipe Pose Landmarks)
     LANDMARKS = {
         'nose': 0,
@@ -44,40 +44,40 @@ class Config:
         'left_foot_index': 31,
         'right_foot_index': 32
     }
-    
+
     # Her egzersiz için kritik açı çiftleri
     EXERCISE_ANGLES = {
+
+        # Squat açıları
         'squat': [
             ('left_hip', 'left_knee', 'left_ankle'),
             ('right_hip', 'right_knee', 'right_ankle'),
             ('left_shoulder', 'left_hip', 'left_knee'),
             ('right_shoulder', 'right_hip', 'right_knee')
         ],
-        'pushup': [
-            ('left_shoulder', 'left_elbow', 'left_wrist'),
-            ('right_shoulder', 'right_elbow', 'right_wrist'),
+
+        # Lunge açıları
+        'lunge': [
             ('left_hip', 'left_knee', 'left_ankle'),
-            ('right_hip', 'right_knee', 'right_ankle')
-        ],
-        'shoulder_press': [
-            ('left_elbow', 'left_shoulder', 'left_hip'),
-            ('right_elbow', 'right_shoulder', 'right_hip'),
-            ('left_wrist', 'left_elbow', 'left_shoulder'),
-            ('right_wrist', 'right_elbow', 'right_shoulder')
+            ('right_hip', 'right_knee', 'right_ankle'),
+            ('left_shoulder', 'left_hip', 'left_knee'),
+            ('right_shoulder', 'right_hip', 'right_knee'),
+            ('left_hip', 'left_knee', 'right_knee'),
+            ('right_hip', 'right_knee', 'left_knee')
         ]
     }
-    
+
     # Model eğitimi ayarları
     TEST_SIZE = 0.2
     RANDOM_STATE = 42
     N_ESTIMATORS = 100
     MAX_DEPTH = 10
-    
+
     # Görüntü ayarları
     FRAME_WIDTH = 640
     FRAME_HEIGHT = 480
     FPS_TARGET = 30
-    
+
     # Renkler (BGR formatında)
     COLORS = {
         'GREEN': (0, 255, 0),

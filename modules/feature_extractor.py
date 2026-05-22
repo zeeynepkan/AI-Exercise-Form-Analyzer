@@ -134,7 +134,7 @@ class FeatureExtractor:
 if __name__ == "__main__":
     extractor = FeatureExtractor()
 
-    raw_files = glob.glob("data/raw/squat_*.csv")
+    raw_files = glob.glob("data/raw/*.csv")
 
     if not raw_files:
         print("data/raw klasöründe squat CSV dosyası bulunamadı.")
