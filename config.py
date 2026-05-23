@@ -6,7 +6,7 @@ class Config:
     MIN_TRACKING_CONFIDENCE = 0.5
 
     # Egzersiz tipleri
-    EXERCISE_TYPES = ['squat', 'lunge']
+    EXERCISE_TYPES = ['squat', 'lunge', 'knee_pushup', 'bridge']
 
     # Landmark indeksleri (MediaPipe Pose Landmarks)
     LANDMARKS = {
@@ -64,6 +64,26 @@ class Config:
             ('right_shoulder', 'right_hip', 'right_knee'),
             ('left_hip', 'left_knee', 'right_knee'),
             ('right_hip', 'right_knee', 'left_knee')
+        ],
+
+        # Knee Push-up açıları
+        'knee_pushup': [
+            ('left_shoulder', 'left_elbow', 'left_wrist'),
+            ('right_shoulder', 'right_elbow', 'right_wrist'),
+            ('left_shoulder', 'left_hip', 'left_knee'),
+            ('right_shoulder', 'right_hip', 'right_knee'),
+            ('left_hip', 'left_knee', 'left_ankle'),
+            ('right_hip', 'right_knee', 'right_ankle')
+        ],
+
+        # Bridge açıları
+        'bridge': [
+            ('left_shoulder', 'left_hip', 'left_knee'),
+            ('right_shoulder', 'right_hip', 'right_knee'),
+            ('left_hip', 'left_knee', 'left_ankle'),
+            ('right_hip', 'right_knee', 'right_ankle'),
+            ('left_shoulder', 'left_hip', 'left_ankle'),
+            ('right_shoulder', 'right_hip', 'right_ankle')
         ]
     }
 

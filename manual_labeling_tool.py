@@ -176,5 +176,5 @@ def manual_label_video(video_path, exercise_type="lunge"):
 
 
 if __name__ == "__main__":
-    video_path = "data/sample_videos/LUNGE_VIDEO.mp4"
-    manual_label_video(video_path, exercise_type="lunge")
+    video_path = "data/sample_videos/BRIDGE_VIDEO.mp4"
+    manual_label_video(video_path, exercise_type="bridge")
