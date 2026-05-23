@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import joblib
 
+from config import Config
 from modules.feature_extractor import FeatureExtractor
 
 mp_pose = mp.solutions.pose
@@ -29,27 +30,61 @@ def landmark_to_dict(landmarks):
     return data
 
 
-def is_squat_body_visible(landmarks, threshold=0.35):
-    """Squat analizi için alt vücut yeterince görünüyor mu kontrol eder."""
-    required = [
-        mp_pose.PoseLandmark.LEFT_HIP.value,
-        mp_pose.PoseLandmark.RIGHT_HIP.value,
-        mp_pose.PoseLandmark.LEFT_KNEE.value,
-        mp_pose.PoseLandmark.RIGHT_KNEE.value,
-        mp_pose.PoseLandmark.LEFT_ANKLE.value,
-        mp_pose.PoseLandmark.RIGHT_ANKLE.value,
-    ]
+def is_body_visible(landmarks, exercise_type, threshold=0.35):
+    """Seçilen egzersiz için gerekli vücut noktaları görünüyor mu kontrol eder."""
+
+    if exercise_type in ["squat", "lunge"]:
+        required = [
+            mp_pose.PoseLandmark.LEFT_HIP.value,
+            mp_pose.PoseLandmark.RIGHT_HIP.value,
+            mp_pose.PoseLandmark.LEFT_KNEE.value,
+            mp_pose.PoseLandmark.RIGHT_KNEE.value,
+            mp_pose.PoseLandmark.LEFT_ANKLE.value,
+            mp_pose.PoseLandmark.RIGHT_ANKLE.value,
+        ]
+        min_visible = 4
+
+    elif exercise_type == "knee_pushup":
+        required = [
+            mp_pose.PoseLandmark.LEFT_SHOULDER.value,
+            mp_pose.PoseLandmark.RIGHT_SHOULDER.value,
+            mp_pose.PoseLandmark.LEFT_ELBOW.value,
+            mp_pose.PoseLandmark.RIGHT_ELBOW.value,
+            mp_pose.PoseLandmark.LEFT_WRIST.value,
+            mp_pose.PoseLandmark.RIGHT_WRIST.value,
+            mp_pose.PoseLandmark.LEFT_HIP.value,
+            mp_pose.PoseLandmark.RIGHT_HIP.value,
+            mp_pose.PoseLandmark.LEFT_KNEE.value,
+            mp_pose.PoseLandmark.RIGHT_KNEE.value,
+        ]
+        min_visible = 6
+
+    elif exercise_type == "bridge":
+        required = [
+            mp_pose.PoseLandmark.LEFT_SHOULDER.value,
+            mp_pose.PoseLandmark.RIGHT_SHOULDER.value,
+            mp_pose.PoseLandmark.LEFT_HIP.value,
+            mp_pose.PoseLandmark.RIGHT_HIP.value,
+            mp_pose.PoseLandmark.LEFT_KNEE.value,
+            mp_pose.PoseLandmark.RIGHT_KNEE.value,
+            mp_pose.PoseLandmark.LEFT_ANKLE.value,
+            mp_pose.PoseLandmark.RIGHT_ANKLE.value,
+        ]
+        min_visible = 5
+
+    else:
+        required = []
+        min_visible = 0
 
     visible_count = sum(
         landmarks[i].visibility > threshold
         for i in required
     )
 
-    return visible_count >= 4
+    return visible_count >= min_visible
 
 
 def get_average_knee_angle(features):
-    """Sol ve sağ diz açılarını kullanarak ortalama diz açısını hesaplar."""
     left_knee = features.get("left_hip_left_knee_left_ankle_angle", None)
     right_knee = features.get("right_hip_right_knee_right_ankle_angle", None)
 
@@ -67,11 +102,44 @@ def get_average_knee_angle(features):
     return sum(angles) / len(angles)
 
 
+def get_exercise_display_name(exercise_type):
+    names = {
+        "squat": "Squat",
+        "lunge": "Lunge",
+        "knee_pushup": "Knee Push-up",
+        "bridge": "Bridge"
+    }
+
+    return names.get(exercise_type, exercise_type)
+
+
+def select_exercise():
+    print("=" * 60)
+    print("AI DESTEKLI GERCEK ZAMANLI EGZERSIZ ANALIZI")
+    print("=" * 60)
+
+    print("\nDesteklenen egzersizler:")
+    for i, exercise in enumerate(Config.EXERCISE_TYPES, start=1):
+        print(f"{i}. {exercise}")
+
+    selected = input("\nAnaliz edilecek egzersiz tipi: ").strip().lower()
+
+    if selected not in Config.EXERCISE_TYPES:
+        print("Geçersiz egzersiz tipi!")
+        print(f"Geçerli egzersizler: {Config.EXERCISE_TYPES}")
+        return None
+
+    return selected
+
+
 def main():
 
-    print("=" * 60)
-    print("AI DESTEKLI GERCEK ZAMANLI SQUAT ANALIZI")
-    print("=" * 60)
+    exercise_type = select_exercise()
+
+    if exercise_type is None:
+        return
+
+    exercise_name = get_exercise_display_name(exercise_type)
 
     model_data = joblib.load("data/models/exercise_form_model.pkl")
 
@@ -82,8 +150,8 @@ def main():
 
     pose = mp_pose.Pose(
         static_image_mode=False,
-        min_detection_confidence=0.5,
-        min_tracking_confidence=0.5
+        min_detection_confidence=Config.MIN_DETECTION_CONFIDENCE,
+        min_tracking_confidence=Config.MIN_TRACKING_CONFIDENCE
     )
 
     cap = cv2.VideoCapture(0)
@@ -93,13 +161,18 @@ def main():
         return
 
     rep_count = 0
-    is_squatting = False
+    is_down_position = False
+
     correct_frames = 0
     wrong_frames = 0
     confidence_values = []
 
     window_name = "AI Exercise Form Analysis"
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+
+    print("\nAnaliz başlıyor...")
+    print(f"Egzersiz: {exercise_name}")
+    print("Çıkmak için q tuşuna bas.")
 
     while True:
 
@@ -121,25 +194,25 @@ def main():
                 mp_pose.POSE_CONNECTIONS
             )
 
-            if not is_squat_body_visible(landmarks):
-                cv2.rectangle(frame, (20, 20), (680, 150), (0, 0, 0), -1)
+            if not is_body_visible(landmarks, exercise_type):
+                cv2.rectangle(frame, (20, 20), (740, 155), (0, 0, 0), -1)
 
                 cv2.putText(
                     frame,
-                    "SQUAT ICIN ALT VUCUDUNU GOSTER!",
+                    f"{exercise_name.upper()} ICIN VUCUDUNU KADRAJA AL!",
                     (40, 70),
                     cv2.FONT_HERSHEY_SIMPLEX,
-                    0.8,
+                    0.75,
                     (0, 0, 255),
                     3
                 )
 
                 cv2.putText(
                     frame,
-                    "Kalca, diz ve ayak bilekleri gorunmeli.",
+                    "Gerekli eklem noktalarinin gorundugunden emin ol.",
                     (40, 115),
                     cv2.FONT_HERSHEY_SIMPLEX,
-                    0.7,
+                    0.65,
                     (255, 255, 255),
                     2
                 )
@@ -152,13 +225,13 @@ def main():
                 continue
 
             row_data = landmark_to_dict(landmarks)
-            row_data["exercise_type"] = "squat"
+            row_data["exercise_type"] = exercise_type
 
             row_series = pd.Series(row_data)
 
             angle_features = extractor.extract_angles_from_row(
                 row_series,
-                "squat"
+                exercise_type
             )
 
             ratio_features = extractor.extract_body_ratios_from_row(row_series)
@@ -169,12 +242,14 @@ def main():
 
             avg_knee_angle = get_average_knee_angle(features)
 
-            if avg_knee_angle < 100 and not is_squatting:
-                is_squatting = True
+            # Basit tekrar sayacı sadece squat için güvenilir.
+            if exercise_type == "squat":
+                if avg_knee_angle < 100 and not is_down_position:
+                    is_down_position = True
 
-            elif avg_knee_angle > 160 and is_squatting:
-                is_squatting = False
-                rep_count += 1
+                elif avg_knee_angle > 160 and is_down_position:
+                    is_down_position = False
+                    rep_count += 1
 
             feature_df = pd.DataFrame([features])
 
@@ -192,19 +267,29 @@ def main():
 
             if prediction == 1:
                 label = "CORRECT FORM"
-                color = (0, 255, 0)
+                color = Config.COLORS["GREEN"]
                 correct_frames += 1
             else:
                 label = "INCORRECT FORM"
-                color = (0, 0, 255)
+                color = Config.COLORS["RED"]
                 wrong_frames += 1
 
-            cv2.rectangle(frame, (20, 20), (500, 205), (0, 0, 0), -1)
+            cv2.rectangle(frame, (20, 20), (560, 230), (0, 0, 0), -1)
+
+            cv2.putText(
+                frame,
+                f"Exercise: {exercise_name}",
+                (40, 55),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                Config.COLORS["YELLOW"],
+                2
+            )
 
             cv2.putText(
                 frame,
                 label,
-                (40, 65),
+                (40, 100),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 1,
                 color,
@@ -214,32 +299,43 @@ def main():
             cv2.putText(
                 frame,
                 f"Confidence: %{confidence:.1f}",
-                (40, 110),
+                (40, 145),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.8,
-                (255, 255, 255),
+                Config.COLORS["WHITE"],
                 2
             )
 
-            cv2.putText(
-                frame,
-                f"Reps: {rep_count}",
-                (40, 150),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.8,
-                (0, 255, 255),
-                2
-            )
+            if exercise_type == "squat":
+                cv2.putText(
+                    frame,
+                    f"Reps: {rep_count}",
+                    (40, 185),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8,
+                    Config.COLORS["YELLOW"],
+                    2
+                )
 
-            cv2.putText(
-                frame,
-                f"Knee Angle: {int(avg_knee_angle)}",
-                (40, 185),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.7,
-                (255, 255, 0),
-                2
-            )
+                cv2.putText(
+                    frame,
+                    f"Knee Angle: {int(avg_knee_angle)}",
+                    (40, 220),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.7,
+                    Config.COLORS["BLUE"],
+                    2
+                )
+            else:
+                cv2.putText(
+                    frame,
+                    "Realtime form classification active",
+                    (40, 190),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.65,
+                    Config.COLORS["WHITE"],
+                    2
+                )
 
         else:
             cv2.putText(
@@ -248,7 +344,7 @@ def main():
                 (40, 80),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.9,
-                (0, 0, 255),
+                Config.COLORS["RED"],
                 3
             )
 
@@ -266,7 +362,11 @@ def main():
     print("\n" + "=" * 60)
     print("SESSION SUMMARY")
     print("=" * 60)
-    print(f"Toplam tekrar: {rep_count}")
+    print(f"Egzersiz: {exercise_name}")
+
+    if exercise_type == "squat":
+        print(f"Toplam tekrar: {rep_count}")
+
     print(f"Correct frame sayisi: {correct_frames}")
     print(f"Wrong frame sayisi: {wrong_frames}")
     print(f"Ortalama confidence: %{avg_confidence:.1f}")
