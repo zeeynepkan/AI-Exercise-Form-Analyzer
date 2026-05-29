@@ -1,0 +1,21 @@
+[
+    "frame",
+    "left_shoulder_left_hip_left_knee_angle",
+    "right_shoulder_right_hip_right_knee_angle",
+    "left_hip_left_knee_left_ankle_angle",
+    "right_hip_right_knee_right_ankle_angle",
+    "left_shoulder_left_hip_left_ankle_angle",
+    "right_shoulder_right_hip_right_ankle_angle",
+    "shoulder_width",
+    "hip_width",
+    "body_height",
+    "shoulder_hip_ratio",
+    "left_shoulder_left_elbow_left_wrist_angle",
+    "right_shoulder_right_elbow_right_wrist_angle",
+    "left_hip_left_knee_right_knee_angle",
+    "right_hip_right_knee_left_knee_angle",
+    "exercise_type_bridge",
+    "exercise_type_knee_pushup",
+    "exercise_type_lunge",
+    "exercise_type_squat"
+]

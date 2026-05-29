@@ -1,4 +1,4 @@
-# main.py
+# main.py   masaüstü veri toplama arayüzü 
 
 import tkinter as tk
 from tkinter import messagebox
@@ -10,8 +10,10 @@ collector = DataCollector()
 
 def start_collection():
 
+
     exercise_type = exercise_var.get()
     label_text = label_var.get()
+
 
     if label_text == "Doğru":
         form_label = 1
@@ -29,11 +31,13 @@ def start_collection():
         f"{exercise_type} veri toplama başlıyor!"
     )
 
+
     collector.collect_from_webcam(
         exercise_type=exercise_type,
         form_label=form_label,
         duration_seconds=duration
     )
+
 
 
 # Ana pencere
@@ -50,6 +54,7 @@ title = tk.Label(
     font=("Arial", 18, "bold"),
     bg="white"
 )
+
 title.pack(pady=20)
 
 
@@ -60,6 +65,7 @@ exercise_label = tk.Label(
     font=("Arial", 11),
     bg="white"
 )
+
 exercise_label.pack()
 
 exercise_var = tk.StringVar(value="squat")
@@ -69,6 +75,7 @@ exercise_menu = tk.OptionMenu(
     exercise_var,
     *Config.EXERCISE_TYPES
 )
+
 exercise_menu.pack(pady=10)
 
 
@@ -79,6 +86,7 @@ label_title = tk.Label(
     font=("Arial", 11),
     bg="white"
 )
+
 label_title.pack()
 
 label_var = tk.StringVar(value="Doğru")
@@ -89,6 +97,7 @@ label_menu = tk.OptionMenu(
     "Doğru",
     "Yanlış"
 )
+
 label_menu.pack(pady=10)
 
 
@@ -99,6 +108,7 @@ duration_label = tk.Label(
     font=("Arial", 11),
     bg="white"
 )
+
 duration_label.pack()
 
 duration_entry = tk.Entry(root, justify="center")
@@ -118,6 +128,7 @@ start_button = tk.Button(
     height=2
 )
 
+
 start_button.pack(pady=30)
 
 
@@ -129,7 +140,11 @@ info_label = tk.Label(
     fg="gray",
     bg="white"
 )
+
+
+
 info_label.pack()
+
 
 
 root.mainloop()

@@ -1,4 +1,4 @@
-# manual_labeling_tool.py
+# manual_labeling_tool.py  modelleri eğitebilmek için aldığım videolardan manuel etiketleme
 
 import cv2
 import mediapipe as mp
@@ -13,6 +13,7 @@ mp_drawing = mp.solutions.drawing_utils
 
 
 def extract_landmarks(results):
+
     if not results.pose_landmarks:
         return None
 
@@ -23,7 +24,9 @@ def extract_landmarks(results):
     return np.array(landmarks)
 
 
+
 def save_to_csv(data, output_file):
+
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
     landmark_names = [
@@ -31,11 +34,15 @@ def save_to_csv(data, output_file):
         for landmark in mp_pose.PoseLandmark
     ]
 
+
+
     header = ["frame", "exercise_type", "form_label"]
+
 
     for name in landmark_names:
         for axis in ["x", "y", "z", "vis"]:
             header.append(f"{name}_{axis}")
+
 
     with open(output_file, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
@@ -44,24 +51,33 @@ def save_to_csv(data, output_file):
 
 
 def manual_label_video(video_path, exercise_type="lunge"):
+
     if exercise_type not in Config.EXERCISE_TYPES:
+
         print(f"Geçersiz egzersiz tipi: {exercise_type}")
         print(f"Geçerli egzersizler: {Config.EXERCISE_TYPES}")
+
         return
+    
 
     cap = cv2.VideoCapture(video_path)
 
     if not cap.isOpened():
+        
         print(f"Video açılamadı: {video_path}")
+
         return
 
     pose = mp_pose.Pose(
+
         static_image_mode=False,
         min_detection_confidence=Config.MIN_DETECTION_CONFIDENCE,
         min_tracking_confidence=Config.MIN_TRACKING_CONFIDENCE
     )
 
+
     data = []
+
     frame_count = 0
 
     print("=" * 60)
@@ -78,22 +94,28 @@ def manual_label_video(video_path, exercise_type="lunge"):
     print("=" * 60)
 
     while True:
+
         ret, frame = cap.read()
 
         if not ret:
             break
 
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
         results = pose.process(frame_rgb)
 
         display_frame = frame.copy()
 
+
         if results.pose_landmarks:
+
             mp_drawing.draw_landmarks(
                 display_frame,
                 results.pose_landmarks,
                 mp_pose.POSE_CONNECTIONS
             )
+
+
 
         cv2.putText(
             display_frame,
@@ -105,6 +127,7 @@ def manual_label_video(video_path, exercise_type="lunge"):
             2
         )
 
+
         cv2.putText(
             display_frame,
             f"Frame: {frame_count}",
@@ -114,6 +137,7 @@ def manual_label_video(video_path, exercise_type="lunge"):
             (255, 255, 255),
             2
         )
+
 
         cv2.putText(
             display_frame,
@@ -125,19 +149,26 @@ def manual_label_video(video_path, exercise_type="lunge"):
             2
         )
 
+
+
         cv2.imshow("Manual Labeling Tool", display_frame)
 
         key = cv2.waitKey(0) & 0xFF
+
 
         if key == ord("q"):
             print("Çıkılıyor ve veri kaydediliyor...")
             break
 
+
         elif key == ord("s"):
             print(f"Frame {frame_count}: atlandı")
 
         elif key == ord("c"):
+
             landmarks = extract_landmarks(results)
+
+
 
             if landmarks is not None:
                 frame_data = [frame_count, exercise_type, 1]
@@ -147,8 +178,14 @@ def manual_label_video(video_path, exercise_type="lunge"):
             else:
                 print(f"Frame {frame_count}: landmark bulunamadı")
 
+
+
+
+
         elif key == ord("w"):
             landmarks = extract_landmarks(results)
+
+
 
             if landmarks is not None:
                 frame_data = [frame_count, exercise_type, 0]
@@ -160,12 +197,19 @@ def manual_label_video(video_path, exercise_type="lunge"):
 
         frame_count += 1
 
+
+
+
     cap.release()
     cv2.destroyAllWindows()
     pose.close()
 
+
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = f"data/raw/manual_labeled_{exercise_type}_{timestamp}.csv"
+
+
 
     save_to_csv(data, output_file)
 
@@ -174,7 +218,7 @@ def manual_label_video(video_path, exercise_type="lunge"):
     print(f"Çıktı dosyası: {output_file}")
     print("=" * 60)
 
-
+#burada her egzersiz videosu için ayrı ayrı etiketleme yapıyorum
 if __name__ == "__main__":
     video_path = "data/sample_videos/BRIDGE_VIDEO.mp4"
     manual_label_video(video_path, exercise_type="bridge")
