@@ -1,11 +1,18 @@
+# Python
 venv/
 venv312/
 __pycache__/
 *.pyc
 
-data/raw/
-data/processed/
-data/models/
+# Flutter
+mobile_app/build/
+mobile_app/.dart_tool/
+mobile_app/.idea/
+mobile_app/android/.gradle/
 
-.idea/
-.vscode/
+# Data
+ml_training/data/raw/
+ml_training/data/sample_videos/
+*.mp4
+*.avi
+*.mov
