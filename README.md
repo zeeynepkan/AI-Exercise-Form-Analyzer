@@ -1,4 +1,4 @@
-#🏋️ AI Exercise Form Analyzer
+# 🏋️ AI Exercise Form Analyzer
 
 An AI-powered real-time exercise form analysis system that combines Computer Vision, Machine Learning, and Mobile Development to evaluate exercise performance and provide instant feedback to users.
 
@@ -32,60 +32,161 @@ The Android application has been successfully deployed and tested through Google
 
 
 
-##💻 Installation and Setup
+## 💻 Installation and Setup
 1. Clone the Repository 
-   git clone https://github.com/zeeynepkan/AI-Exercise-Form-Analyzer.git
+  ```bash
+git clone https://github.com/zeeynepkan/AI-Exercise-Form-Analyzer.git
+cd AI-Exercise-Form-Analyzer
+```
+2. Install Required Python Packages
    
-   cd AI-Exercise-Form-Analyzer
- 2. Create a Python Virtual Environment
-    
-  Windows
-
-python -m venv venv
-venv\Scripts\activate
-
-  Linux / macOS
-
-  python -m venv venv
-  
-source venv/bin/activate
-
-
-3. Install Required Python Packages
-
- pip install tensorflow
- 
+```bash
+pip install tensorflow
 pip install scikit-learn
-
 pip install mediapipe
-
 pip install opencv-python
-
 pip install pandas
-
 pip install numpy
-
 pip install joblib
+```
+
+ 3. Create a Python Virtual Environment
+ ### Windows
+
+```bash
+py -m venv venv
+venv\Scripts\activate
+```
+  ### Linux / macOS
+```bash
+  py -m venv venv
+  source venv/bin/activate
+```
+Train Models
+
+Random Forest:
+```bash
+py train_model.py
+```
+
+TensorFlow MLP:
+```bash
+py train_tensorflow_model.py
+```
+Export Mobile Models
+```bash
+py export_mlp_weights.py
+py export_mobile_metadata.py
+```
+Optional TFLite conversion:
+```bash
+py convert_to_tflite.py
+```
+Run Desktop Prototype
+```bash
+py realtime_ml_analyzer.py
+```
+
+
+
 
 
 4. Run the Desktop Prototype
 
-   
 
 Real-time exercise analysis on PC:
-
-
+```bash
 py realtime_ml_analyzer.py
+```
 
 
-##📱 Flutter Mobile Application Setup
+## 📱 Flutter Mobile Application Setup
 
 Navigate to the mobile application directory:
-
+```bash
 cd mobile_app
-
 flutter pub get
-
 flutter run device-ID
+```
+
+Build Android APK
+```bash
+flutter build apk --release
+```
+
+Build Android App Bundle
+```bash
+flutter build appbundle --release
+```
+
+Requirements
+
+Python
+
+Python 3.12+
+
+TensorFlow
+
+MediaPipe
+
+OpenCV
+
+Scikit-Learn
+
+Pandas
+
+NumPy
+
+Flutter
+
+Flutter 3.x
+
+Dart SDK
+
+Android Studio
+
+Android SDK
+
+## 📂 Repository Structure
+
+```text
+AI-Exercise-Form-Analyzer
+│
+├── mobile_app/
+├── modules/
+├── tests/
+├── utils/
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   └── models/
+│
+├── manual_labeling_tool.py
+├── train_model.py
+├── train_tensorflow_model.py
+├── export_mlp_weights.py
+├── export_mobile_metadata.py
+├── realtime_ml_analyzer.py
+└── README.md
+```
+## 🤖 Machine Learning Pipeline
+
+```text
+Exercise Videos
+      ↓
+Manual Labeling
+      ↓
+Feature Extraction
+      ↓
+Feature Normalization
+      ↓
+Random Forest / TensorFlow MLP
+      ↓
+Model Export
+      ↓
+Flutter Mobile Application
+```
+
+
 
 
