@@ -104,13 +104,7 @@ venv\Scripts\activate
 3. Install Required Python Packages
    
 ```bash
-pip install tensorflow
-pip install scikit-learn
-pip install mediapipe
-pip install opencv-python
-pip install pandas
-pip install numpy
-pip install joblib
+pip install -r requirements.txt
 ```
 
  
