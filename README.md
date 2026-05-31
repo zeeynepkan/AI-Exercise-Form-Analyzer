@@ -9,20 +9,70 @@ This project was developed as a Graduation Thesis Project at the Department of C
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-blue)
 ![MediaPipe](https://img.shields.io/badge/MediaPipe-Pose-green)
 
-## 🚀 Quick Overview
+## 📥 Download APK
+
+👉 [Download Latest APK](https://github.com/zeeynepkan/AI-Exercise-Form-Analyzer/releases/latest)
+
+
+## ✨ Features
 
 - Real-time exercise form analysis
+- Instant visual feedback
 - MediaPipe Pose landmark detection
-- TensorFlow MLP classification
-- Flutter mobile application
-- Multi-language support
-- Dark / Light theme support
+- TensorFlow MLP classifier
+- Support for Squat, Lunge, Knee Push-Up and Bridge exercises
+- Multi-language support (English / Turkish)
+- Dark and Light theme support
 - Session statistics tracking
-
+- Mobile deployment with Flutter
 
 ## 📱 Application Screenshots
 <img width="240" height="500" alt="image" src="https://github.com/user-attachments/assets/25950bd5-0ba1-4a71-b4fc-b62bd06d80d2" />    <img width="240" height="500" alt="image" src="https://github.com/user-attachments/assets/29180b14-a771-4a65-84b7-19fa71752b57" />    <img width="240" height="500" alt="image" src="https://github.com/user-attachments/assets/2a905b98-f8b7-4955-bafe-0368875864db" />
 
+## 🏃 Supported Exercises
+
+| Exercise | Supported |
+|-----------|-----------|
+| Squat | ✅ |
+| Lunge | ✅ |
+| Knee Push-Up | ✅ |
+| Bridge | ✅ |
+
+## 📊 Dataset
+
+The dataset was created manually using exercise videos and MediaPipe Pose landmarks.
+
+Data collection process:
+
+- Exercise videos were recorded for each exercise type.
+- MediaPipe Pose was used to extract body landmarks.
+- Frames were manually labeled as correct or incorrect form.
+- Angle-based features were extracted from pose landmarks.
+- The final dataset was used to train Random Forest and TensorFlow MLP models.
+
+Supported exercises:
+- Squat
+- Lunge
+- Knee Push-Up
+- Bridge
+
+## 🤖 Machine Learning Pipeline
+
+```text
+Exercise Videos
+      ↓
+Manual Labeling
+      ↓
+Feature Extraction
+      ↓
+Feature Normalization
+      ↓
+Random Forest / TensorFlow MLP
+      ↓
+Model Export
+      ↓
+Flutter Mobile Application
+```
 
 
 
@@ -38,19 +88,8 @@ The Android application has been successfully deployed and tested through Google
 git clone https://github.com/zeeynepkan/AI-Exercise-Form-Analyzer.git
 cd AI-Exercise-Form-Analyzer
 ```
-2. Install Required Python Packages
-   
-```bash
-pip install tensorflow
-pip install scikit-learn
-pip install mediapipe
-pip install opencv-python
-pip install pandas
-pip install numpy
-pip install joblib
-```
 
- 3. Create a Python Virtual Environment
+2. Create a Python Virtual Environment
  ### Windows
 
 ```bash
@@ -62,7 +101,20 @@ venv\Scripts\activate
   py -m venv venv
   source venv/bin/activate
 ```
-Train Models
+3. Install Required Python Packages
+   
+```bash
+pip install tensorflow
+pip install scikit-learn
+pip install mediapipe
+pip install opencv-python
+pip install pandas
+pip install numpy
+pip install joblib
+```
+
+ 
+4. Train Models
 
 Random Forest:
 ```bash
@@ -82,16 +134,8 @@ Optional TFLite conversion:
 ```bash
 py convert_to_tflite.py
 ```
-Run Desktop Prototype
-```bash
-py realtime_ml_analyzer.py
-```
 
-
-
-
-
-4. Run the Desktop Prototype
+5. Run the Desktop Prototype
 
 
 Real-time exercise analysis on PC:
@@ -119,34 +163,23 @@ Build Android App Bundle
 flutter build appbundle --release
 ```
 
-Requirements
+## 📋 Requirements
 
-Python
+### Python
+- Python 3.12+
+- TensorFlow
+- MediaPipe
+- OpenCV
+- Scikit-Learn
+- Pandas
+- NumPy
 
-Python 3.12+
-
-TensorFlow
-
-MediaPipe
-
-OpenCV
-
-Scikit-Learn
-
-Pandas
-
-NumPy
-
-Flutter
-
-Flutter 3.x
-
-Dart SDK
-
-Android Studio
-
-Android SDK
-
+### Flutter
+- Flutter 3.x
+- Dart SDK
+- Android Studio
+- Android SDK
+- 
 ## 📂 Repository Structure
 
 ```text
@@ -169,23 +202,18 @@ AI-Exercise-Form-Analyzer
 ├── realtime_ml_analyzer.py
 └── README.md
 ```
-## 🤖 Machine Learning Pipeline
 
-```text
-Exercise Videos
-      ↓
-Manual Labeling
-      ↓
-Feature Extraction
-      ↓
-Feature Normalization
-      ↓
-Random Forest / TensorFlow MLP
-      ↓
-Model Export
-      ↓
-Flutter Mobile Application
-```
+## 👩‍💻 Author
+
+**Zeynep Kan**
+
+Computer Engineering Student  
+Çukurova University
+
+Graduation Thesis Project (2026)
+
+GitHub:
+https://github.com/zeeynepkan
 
 
 
